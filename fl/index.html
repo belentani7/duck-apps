@@ -545,9 +545,11 @@ function setupPR(){
   const cv=document.getElementById('prCanvas');
   const wrap=document.getElementById('prWrap');
   const ROWS=24, ROWH=18, COLW=30, KEYW=52;
-  cv.width=KEYW+MAXSTEPS*COLW;
-  cv.height=ROWS*ROWH;
-  cv._pr={ROWS,ROWH,COLW,KEYW,oct:curOct,cursorStep:-1};
+  const DPR=window.devicePixelRatio||2;
+  const W=KEYW+MAXSTEPS*COLW, H=ROWS*ROWH;
+  cv.width=W*DPR; cv.height=H*DPR;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+  cv._pr={ROWS,ROWH,COLW,KEYW,oct:curOct,cursorStep:-1,DPR};
   let drag=null, curNote=false;
 
   function topToMidi(y){
@@ -559,9 +561,10 @@ function setupPR(){
   function redraw(){
     const pr=cv._pr;
     const ctx=cv.getContext('2d');
+    ctx.setTransform(pr.DPR,0,0,pr.DPR,0,0);
     const inst=getChan();
     const topMidi=36+pr.oct*12;
-    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.clearRect(0,0,cv.width/pr.DPR,cv.height/pr.DPR);
     // grid bg
     ctx.fillStyle='#0d1218'; ctx.fillRect(0,0,cv.width,cv.height);
     // rows
@@ -671,16 +674,21 @@ function setupPlaylist(){
   const cv=document.getElementById('plCanvas');
   const wrap=document.getElementById('plWrap');
   const ROWH=34, COLW=28, BARS=16;
-  cv.width=BARS*4*COLW;
-  cv.height=channels.length*ROWH;
-  cv._pl={ROWH,COLW,BARS,cellW:4*COLW};
+  const DPR=window.devicePixelRatio||2;
+  const W=BARS*4*COLW;
+  cv.style.width=W+'px';
+  cv._pl={ROWH,COLW,BARS,cellW:4*COLW,DPR};
   let startDrag=null;
 
   function redraw(){
     const pl=cv._pl;
     const ctx=cv.getContext('2d');
-    cv.height=channels.length*ROWH;
-    ctx.clearRect(0,0,cv.width,cv.height);
+    const DPR=pl.DPR;
+    cv.width=W*DPR;
+    cv.height=channels.length*ROWH*DPR;
+    cv.style.height=channels.length*ROWH+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    ctx.clearRect(0,0,W,channels.length*ROWH);
     ctx.fillStyle='#0d1218'; ctx.fillRect(0,0,cv.width,cv.height);
     // rows + labels
     channels.forEach((c,ci)=>{
