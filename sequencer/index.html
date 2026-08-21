@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DUCK SEQUENCER — Estúdio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ===== TOP BAR ===== -->
+    <header id="topbar">
+      <div class="brand">
+        <span class="logo">🦆</span>
+        <div>
+          <h1>DUCK SEQUENCER</h1>
+          <span class="sub">Estúdio musical · inspirado em FL Studio</span>
+        </div>
+      </div>
+      <div class="transport">
+        <button id="btnPlay" class="btn btn-primary" title="Espaço">▶ PLAY</button>
+        <button id="btnStop" class="btn" title="Esc">■ STOP</button>
+        <label class="tempo-box">
+          BPM
+          <input id="tempo" type="number" min="40" max="240" value="120">
+        </label>
+        <label class="tempo-box">
+          Passos
+          <select id="stepCount">
+            <option value="16" selected>16</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+          </select>
+        </label>
+        <label class="tempo-box">
+          Swing
+          <input id="swing" type="range" min="0" max="50" value="0">
+        </label>
+        <span id="midiStatus" class="midi-status">🎹 MIDI: ...</span>
+      </div>
+      <div class="actions">
+        <button id="btnN8n" class="btn">⚡ n8n</button>
+        <button id="btnOllama" class="btn btn-ai">🤖 Ollama IA</button>
+        <label class="tempo-box ai-box">
+          Modelo
+          <select id="ollamaModel"></select>
+        </label>
+        <label class="tempo-box">
+          Densidade
+          <input id="ollamaDensity" type="range" min="10" max="90" value="50">
+        </label>
+        <label class="tempo-box">
+          Variação
+          <input id="ollamaVariation" type="range" min="10" max="90" value="40">
+        </label>
+        <button id="btnSave" class="btn">💾 Salvar padrão</button>
+        <button id="btnExport" class="btn">⬇ Exportar JSON</button>
+        <button id="btnImport" class="btn">⬆ Importar</button>
+        <input type="file" id="fileImport" accept=".json" hidden>
+        <span id="status" class="status"></span>
+      </div>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+      <!-- SEQUENCER -->
+      <section id="sequencer" class="panel">
+        <div class="panel-head">
+          <h2>SEQUENCIADOR DE PASSOS</h2>
+          <div class="head-controls">
+            <label>Fila de canais: <span id="channelCount">8</span></label>
+          </div>
+        </div>
+        <div id="stepGrid"></div>
+      </section>
+
+      <!-- MIXER -->
+      <section id="mixer" class="panel">
+        <div class="panel-head">
+          <h2>MIXER</h2>
+        </div>
+        <div id="mixerStrip"></div>
+      </section>
+    </main>
+
+    <!-- ===== PATTERNS SIDEBAR ===== -->
+    <aside id="sidebar">
+      <div class="panel-head">
+        <h2>PADRÕES SALVOS</h2>
+      </div>
+      <div id="patternList" class="pattern-list"></div>
+    </aside>
+
+    <div id="toast"></div>
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
