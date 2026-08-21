@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUCK STUDIO ULTIMATE - Interface Profissional de Produção Musical</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --neon-primary: #00ff9d;
+            --neon-secondary: #00d97e;
+            --neon-accent: #00ffcc;
+            --neon-glow: rgba(0, 255, 157, 0.5);
+            --neon-glow-strong: rgba(0, 255, 157, 0.8);
+            --neon-error: #ff0055;
+            --neon-warning: #ffd700;
+
+            --glass-bg: rgba(15, 26, 13, 0.4);
+            --glass-border: rgba(0, 255, 157, 0.2);
+            --glass-hover: rgba(0, 255, 157, 0.1);
+
+            --bg-primary: #050505;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-neon: 0 0 20px var(--neon-glow);
+            --shadow-neon-strong: 0 0 40px var(--neon-glow-strong);
+
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at top left, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(0, 255, 204, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at center, rgba(0, 217, 126, 0.05) 0%, transparent 70%);
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Grid Pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Glass Effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            border-radius: var(--radius-lg);
+        }
+
+        .glass:hover {
+            background: var(--glass-hover);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+            transition: var(--transition-base);
+        }
+
+        /* Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 70px 1fr;
+            min-height: 100vh;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) var(--spacing-lg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: var(--shadow-neon);
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 20px var(--neon-glow); }
+            50% { box-shadow: 0 0 40px var(--neon-glow-strong); }
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .logo-version {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition-base);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .search-bar .material-icons {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .icon-button:hover {
+            background: var(--glass-hover);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-error);
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-sm);
+            padding-left: var(--spacing-md);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-base);
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: var(--glass-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 255, 157, 0.15);
+            color: var(--neon-primary);
+            border-left: 3px solid var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .nav-item .material-icons {
+            font-size: 20px;
+        }
+
+        .nav-item-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            border: none;
+            outline: none;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-hover);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .btn-icon {
+            padding: var(--spacing-sm);
+            width: 36px;
+            height: 36px;
+            justify-content: center;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .stat-card {
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: rgba(0, 255, 157, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-primary);
+        }
+
+        .stat-icon .material-icons {
+            font-size: 28px;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neon-primary);
+        }
+
+        .stat-trend.down {
+            color: var(--neon-error);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Audio Player */
+        .audio-player {
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .track-artwork {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: var(--shadow-neon);
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .track-artist {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            color: var(--text-primary);
+        }
+
+        .control-btn:hover {
+            background: var(--glass-hover);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .control-btn.play {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .control-btn.play:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .control-btn .material-icons {
+            font-size: 24px;
+        }
+
+        .control-btn.play .material-icons {
+            font-size: 32px;
+        }
+
+        .progress-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-accent));
+            border-radius: 3px;
+            width: 35%;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--neon-primary);
+            border-radius: 50%;
+            box-shadow: var(--shadow-neon);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-fill {
+            height: 100%;
+            background: var(--neon-primary);
+            border-radius: 2px;
+            width: 70%;
+        }
+
+        /* Waveform */
+        .waveform {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 2px;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .wave-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--neon-primary), var(--neon-accent));
+            border-radius: 2px;
+            min-height: 4px;
+            transition: height 0.1s ease;
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .project-card {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .project-artwork {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: var(--shadow-neon);
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .project-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(0, 255, 157, 0.2);
+            color: var(--neon-primary);
+        }
+
+        .status-pending {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--neon-warning);
+        }
+
+        .status-completed {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .tool-card {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .tool-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--spacing-md);
+            border-radius: var(--radius-md);
+            background: rgba(0, 255, 157, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-primary);
+            transition: var(--transition-base);
+        }
+
+        .tool-card:hover .tool-icon {
+            background: rgba(0, 255, 157, 0.2);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .tool-icon .material-icons {
+            font-size: 32px;
+        }
+
+        .tool-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .tool-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .search-bar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                gap: var(--spacing-sm);
+                padding: var(--spacing-sm);
+            }
+
+            .header {
+                padding: var(--spacing-md);
+            }
+
+            .search-bar {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .player-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-pattern"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header glass">
+            <div class="logo">
+                <div class="logo-icon">🦆</div>
+                <div>
+                    <div class="logo-text">DUCK STUDIO</div>
+                    <div class="logo-version">ULTIMATE v1.0.0 PROFESSIONAL</div>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Buscar proyectos, herramientas, plugins...">
+            </div>
+
+            <div class="header-actions">
+                <button class="icon-button">
+                    <span class="material-icons">notifications</span>
+                    <span class="badge">5</span>
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">settings</span>
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">help</span>
+                </button>
+                <div class="user-avatar">B</div>
+            </div>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass">
+            <div class="nav-section">
+                <div class="nav-section-title">Principal</div>
+                <a href="#" class="nav-item active">
+                    <span class="material-icons">dashboard</span>
+                    <span class="nav-item-text">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">music_note</span>
+                    <span class="nav-item-text">Proyectos</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">library_music</span>
+                    <span class="nav-item-text">Biblioteca</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">analytics</span>
+                    <span class="nav-item-text">Estadísticas</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Producción</div>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">graphic_eq</span>
+                    <span class="nav-item-text">Mezcla</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">equalizer</span>
+                    <span class="nav-item-text">Masterización</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">piano</span>
+                    <span class="nav-item-text">Instrumentos</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">mic</span>
+                    <span class="nav-item-text">Grabación</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Negocio</div>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">people</span>
+                    <span class="nav-item-text">Clientes</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">receipt</span>
+                    <span class="nav-item-text">Facturas</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">payments</span>
+                    <span class="nav-item-text">Pagos</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">calendar_today</span>
+                    <span class="nav-item-text">Calendario</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Herramientas</div>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">build</span>
+                    <span class="nav-item-text">Plugins</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">library_add</span>
+                    <span class="nav-item-text">Samples</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">tune</span>
+                    <span class="nav-item-text">Presets</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">speed</span>
+                    <span class="nav-item-text">Herramientas</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content glass">
+            <!-- Stats Section -->
+            <section>
+                <div class="section-header">
+                    <h1 class="section-title">Dashboard</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary">
+                            <span class="material-icons">download</span>
+                            Exportar
+                        </button>
+                        <button class="btn">
+                            <span class="material-icons">add</span>
+                            Nuevo Proyecto
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card glass">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <span class="material-icons">music_note</span>
+                            </div>
+                            <div class="stat-trend">
+                                <span class="material-icons" style="font-size: 16px;">trending_up</span>
+                                +23%
+                            </div>
+                        </div>
+                        <div class="stat-value">847</div>
+                        <div class="stat-label">Proyectos Completados</div>
+                    </div>
+
+                    <div class="stat-card glass">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <span class="material-icons">headphones</span>
+                            </div>
+                            <div class="stat-trend">
+                                <span class="material-icons" style="font-size: 16px;">trending_up</span>
+                                +45%
+                            </div>
+                        </div>
+                        <div class="stat-value">12.5M</div>
+                        <div class="stat-label">Streams Totales</div>
+                    </div>
+
+                    <div class="stat-card glass">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <span class="material-icons">people</span>
+                            </div>
+                            <div class="stat-trend">
+                                <span class="material-icons" style="font-size: 16px;">trending_up</span>
+                                +18%
+                            </div>
+                        </div>
+                        <div class="stat-value">342</div>
+                        <div class="stat-label">Clientes Activos</div>
+                    </div>
+
+                    <div class="stat-card glass">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <span class="material-icons">payments</span>
+                            </div>
+                            <div class="stat-trend">
+                                <span class="material-icons" style="font-size: 16px;">trending_up</span>
+                                +67%
+                            </div>
+                        </div>
+                        <div class="stat-value">$124.8K</div>
+                        <div class="stat-label">Ingresos Mensuales</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audio Player Section -->
+            <section>
+                <div class="audio-player glass">
+                    <div class="player-header">
+                        <div class="track-artwork">🎵</div>
+                        <div class="track-info">
+                            <div class="track-title">Narrative Dreams (Extended Mix)</div>
+                            <div class="track-artist">DUCK feat. Luna Ray & Belentani</div>
+                        </div>
+                        <div class="volume-control">
+                            <span class="material-icons" style="color: var(--neon-primary);">volume_up</span>
+                            <div class="volume-slider">
+                                <div class="volume-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="player-controls">
+                        <button class="control-btn">
+                            <span class="material-icons">shuffle</span>
+                        </button>
+                        <button class="control-btn">
+                            <span class="material-icons">skip_previous</span>
+                        </button>
+                        <button class="control-btn play">
+                            <span class="material-icons">play_arrow</span>
+                        </button>
+                        <button class="control-btn">
+                            <span class="material-icons">skip_next</span>
+                        </button>
+                        <button class="control-btn">
+                            <span class="material-icons">repeat</span>
+                        </button>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="time-display">
+                            <span>3:24</span>
+                            <span>7:45</span>
+                        </div>
+                    </div>
+
+                    <div class="waveform">
+                        <div class="wave-bar" style="height: 30%"></div>
+                        <div class="wave-bar" style="height: 45%"></div>
+                        <div class="wave-bar" style="height: 60%"></div>
+                        <div class="wave-bar" style="height: 75%"></div>
+                        <div class="wave-bar" style="height: 85%"></div>
+                        <div class="wave-bar" style="height: 90%"></div>
+                        <div class="wave-bar" style="height: 85%"></div>
+                        <div class="wave-bar" style="height: 75%"></div>
+                        <div class="wave-bar" style="height: 65%"></div>
+                        <div class="wave-bar" style="height: 50%"></div>
+                        <div class="wave-bar" style="height: 40%"></div>
+                        <div class="wave-bar" style="height: 35%"></div>
+                        <div class="wave-bar" style="height: 45%"></div>
+                        <div class="wave-bar" style="height: 55%"></div>
+                        <div class="wave-bar" style="height: 65%"></div>
+                        <div class="wave-bar" style="height: 70%"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Proyectos Destacados</h2>
+                    <button class="btn btn-secondary">
+                        Ver Todos
+                        <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+
+                <div class="projects-grid">
+                    <div class="project-card glass">
+                        <div class="project-artwork">🌊</div>
+                        <div class="project-title">Ocean Waves (Cinematic)</div>
+                        <div class="project-meta">
+                            <span>Trap Cinematic</span>
+                            <span>•</span>
+                            <span>4:52</span>
+                        </div>
+                        <div class="project-status status-active">
+                            <span class="material-icons" style="font-size: 12px;">fiber_manual_record</span>
+                            En Producción
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">play_arrow</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">share</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="project-card glass">
+                        <div class="project-artwork">🌃</div>
+                        <div class="project-title">Neon Streets (Urban)</div>
+                        <div class="project-meta">
+                            <span>Urban Trap</span>
+                            <span>•</span>
+                            <span>3:28</span>
+                        </div>
+                        <div class="project-status status-pending">
+                            <span class="material-icons" style="font-size: 12px;">schedule</span>
+                            En Mezcla
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">play_arrow</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">share</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="project-card glass">
+                        <div class="project-artwork">🌌</div>
+                        <div class="project-title">Cosmic Journey (Epic)</div>
+                        <div class="project-meta">
+                            <span>Emotional</span>
+                            <span>•</span>
+                            <span>5:15</span>
+                        </div>
+                        <div class="project-status status-completed">
+                            <span class="material-icons" style="font-size: 12px;">check_circle</span>
+                            Masterizado
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">play_arrow</span>
+                            </button>
+                            <button class="btn btn-secondary btn-icon">
+                                <span class="material-icons">share</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Section -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Herramientas Profesionales</h2>
+                </div>
+
+                <div class="tools-grid">
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">tune</span>
+                        </div>
+                        <div class="tool-name">Afinador Pro</div>
+                        <div class="tool-description">Cromático de precisión</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">speed</span>
+                        </div>
+                        <div class="tool-name">BPM Tap</div>
+                        <div class="tool-description">Detector de tempo</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">timer</span>
+                        </div>
+                        <div class="tool-name">Delay Calc</div>
+                        <div class="tool-description">Sincronización perfecta</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">piano</span>
+                        </div>
+                        <div class="tool-name">Acordes Studio</div>
+                        <div class="tool-description">Progresiones armónicas</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">graphic_eq</span>
+                        </div>
+                        <div class="tool-name">Espectro Avanzado</div>
+                        <div class="tool-description">Análisis FFT en tiempo real</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">equalizer</span>
+                        </div>
+                        <div class="tool-name">LUFS Meter Studio</div>
+                        <div class="tool-description">Medición de loudness profesional</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">settings_voice</span>
+                        </div>
+                        <div class="tool-name">Vocal Chain Premium</div>
+                        <div class="tool-description">Procesamiento completo de voz</div>
+                    </div>
+
+                    <div class="tool-card glass">
+                        <div class="tool-icon">
+                            <span class="material-icons">album</span>
+                        </div>
+                        <div class="tool-name">Preset Manager</div>
+                        <div class="tool-description">Gestor de configuraciones</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Navigation interaction
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // Play button animation
+        document.querySelector('.control-btn.play').addEventListener('click', function() {
+            this.innerHTML = this.innerHTML.includes('play_arrow')
+                ? '<span class="material-icons">pause</span>'
+                : '<span class="material-icons">play_arrow</span>';
+        });
+
+        // Waveform animation
+        const waveBars = document.querySelectorAll('.wave-bar');
+        setInterval(() => {
+            waveBars.forEach(bar => {
+                const newHeight = Math.random() * 100;
+                bar.style.height = newHeight + '%';
+            });
+        }, 200);
+
+        // Tool card interaction
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Project card interaction
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-bar input');
+        if (searchInput) {
+            searchInput.addEventListener('focus', function() {
+                this.placeholder = 'Escriba para buscar...';
+            });
+            searchInput.addEventListener('blur', function() {
+                this.placeholder = 'Buscar proyectos, herramientas, plugins...';
+            });
+        }
+
+        // Progress bar interaction
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) {
+            progressBar.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width * 100;
+                this.querySelector('.progress-fill').style.width = percent + '%';
+            });
+        }
+
+        console.log('🦆 DUCK STUDIO ULTIMATE v1.0.0 - Ready for Production');
+    </script>
+</body>
+</html>

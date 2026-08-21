@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUCK Studio PRO - Estúdio Profissional de Produção Musical</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" rel="stylesheet">
+    <style>
+        :root {
+            --neon-primary: #00ff9d;
+            --neon-secondary: #00d97e;
+            --neon-accent: #00ffcc;
+            --neon-glow: rgba(0, 255, 157, 0.5);
+            --neon-glow-strong: rgba(0, 255, 157, 0.8);
+
+            --glass-bg: rgba(15, 26, 13, 0.4);
+            --glass-border: rgba(0, 255, 157, 0.2);
+            --glass-hover: rgba(0, 255, 157, 0.1);
+
+            --bg-primary: #050505;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+
+            --success: #00ff9d;
+            --warning: #ffd700;
+            --error: #ff0055;
+            --info: #00d9ff;
+
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-neon: 0 0 20px var(--neon-glow);
+            --shadow-neon-strong: 0 0 40px var(--neon-glow-strong);
+
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at top left, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(0, 255, 204, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at center, rgba(0, 217, 126, 0.05) 0%, transparent 70%);
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            width: 100%;
+            height: 100vh;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: var(--shadow-neon);
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 20px var(--neon-glow); }
+            50% { box-shadow: 0 0 40px var(--neon-glow-strong); }
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .logo-subtext {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-hover);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .icon-button:hover {
+            background: var(--glass-hover);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        /* Main Sections */
+        .daw-section, .mixer-section, .effects-section, .timeline-section, .browser-section, .controls-section {
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neon-primary);
+            margin-bottom: var(--spacing-md);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* DAW Section */
+        .daw-section {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .track-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .track {
+            padding: var(--spacing-md);
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .track:hover {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .track.active {
+            background: rgba(0, 255, 157, 0.2);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .track-number {
+            min-width: 30px;
+            font-weight: 700;
+            color: var(--neon-primary);
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .track-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .track-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .track-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--neon-primary);
+            border-radius: 3px;
+            cursor: pointer;
+            color: var(--neon-primary);
+            font-size: 12px;
+            transition: var(--transition-fast);
+        }
+
+        .track-btn:hover {
+            background: var(--neon-primary);
+            color: var(--bg-primary);
+        }
+
+        /* Mixer Section */
+        .mixer-section {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .mixer-channels {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .channel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .channel-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .fader {
+            width: 40px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fader-thumb {
+            position: absolute;
+            width: 100%;
+            height: 16px;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-accent));
+            cursor: grab;
+            box-shadow: var(--shadow-neon);
+            top: 50%;
+            transition: box-shadow var(--transition-fast);
+        }
+
+        .fader-thumb:active {
+            cursor: grabbing;
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .channel-level {
+            font-size: 10px;
+            color: var(--neon-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Effects Section */
+        .effects-section {
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        .effects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .effect-slot {
+            padding: var(--spacing-md);
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .effect-slot:hover {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .effect-slot.active {
+            background: rgba(0, 255, 157, 0.2);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .effect-name {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .effect-params {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tempo-display {
+            text-align: center;
+        }
+
+        .tempo-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--neon-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tempo-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .time-display {
+            text-align: center;
+            flex: 1;
+        }
+
+        .time-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 2px;
+        }
+
+        .time-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .playback-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .playback-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--neon-primary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--neon-primary);
+            font-size: 20px;
+            transition: var(--transition-base);
+        }
+
+        .playback-btn:hover {
+            background: var(--neon-primary);
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .playback-btn.play {
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-neon);
+            width: 52px;
+            font-size: 24px;
+        }
+
+        .playback-btn.play:hover {
+            box-shadow: var(--shadow-neon-strong);
+            transform: scale(1.05);
+        }
+
+        .playback-btn.recording {
+            background: rgba(255, 0, 85, 0.2);
+            border-color: var(--error);
+            color: var(--error);
+            animation: recordPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 85, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 85, 0.6); }
+        }
+
+        .piano-roll {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 3px;
+            margin-top: var(--spacing-lg);
+        }
+
+        .piano-note {
+            aspect-ratio: 1;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .piano-note:hover {
+            background: rgba(0, 255, 157, 0.2);
+        }
+
+        .piano-note.active {
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            box-shadow: var(--shadow-neon);
+            border-color: var(--neon-primary);
+        }
+
+        /* Browser Section */
+        .browser-section {
+            grid-column: 1 / -1;
+            display: none;
+            max-height: 300px;
+        }
+
+        .browser-section.active {
+            display: block;
+        }
+
+        .browser-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .browser-tab {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: var(--transition-base);
+        }
+
+        .browser-tab:hover {
+            color: var(--text-primary);
+            border-color: var(--neon-primary);
+        }
+
+        .browser-tab.active {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--neon-primary);
+            border-color: var(--neon-primary);
+        }
+
+        .browser-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: var(--spacing-md);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .browser-item {
+            padding: var(--spacing-md);
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .browser-item:hover {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: var(--neon-primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .browser-icon {
+            font-size: 24px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .browser-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Controls Section */
+        .controls-section {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            grid-column: 1 / -1;
+            grid-row: auto;
+            order: -1;
+        }
+
+        .control-knob {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .knob {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 180deg,
+                rgba(0, 255, 157, 0.2),
+                rgba(0, 255, 157, 0.4),
+                rgba(0, 255, 157, 0.2)
+            );
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-neon);
+            transition: var(--transition-base);
+        }
+
+        .knob::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: linear-gradient(180deg, var(--neon-primary), var(--neon-accent));
+            border-radius: 2px;
+            position: absolute;
+            top: 8px;
+        }
+
+        .knob:hover {
+            box-shadow: var(--shadow-neon-strong);
+        }
+
+        .knob-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .knob-value {
+            font-size: 11px;
+            color: var(--neon-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-primary);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr 1fr 1fr;
+            }
+
+            .mixer-section {
+                grid-column: 1;
+                grid-row: 3;
+            }
+
+            .effects-section {
+                grid-column: 1;
+                grid-row: 4;
+            }
+
+            .timeline-section {
+                grid-column: 1;
+                grid-row: 5;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+                padding: var(--spacing-sm);
+            }
+
+            .section-title {
+                font-size: 13px;
+            }
+
+            .mixer-channels {
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            }
+
+            .fader {
+                width: 35px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-pattern"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header glass">
+            <div class="logo">
+                <div class="logo-icon">🦆</div>
+                <div>
+                    <div class="logo-text">DUCK STUDIO PRO</div>
+                    <div class="logo-subtext">PROFESSIONAL MUSIC PRODUCTION</div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn btn-secondary">
+                    <span class="material-icons">folder_open</span> Abrir
+                </button>
+                <button class="btn btn-secondary">
+                    <span class="material-icons">save</span> Salvar
+                </button>
+                <button class="btn btn-primary">
+                    <span class="material-icons">download</span> Exportar
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">more_vert</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- DAW Section (Tracks) -->
+        <section class="daw-section glass">
+            <div class="section-title">
+                <span class="material-icons">library_music</span> Tracks
+            </div>
+            <div class="track-list">
+                <div class="track active">
+                    <div class="track-number">01</div>
+                    <div class="track-info">
+                        <div class="track-name">🎹 Piano Melody</div>
+                        <div class="track-type">Instrument</div>
+                    </div>
+                    <div class="track-controls">
+                        <button class="track-btn" title="Mute">M</button>
+                        <button class="track-btn" title="Solo">S</button>
+                        <button class="track-btn" title="Record">●</button>
+                    </div>
+                </div>
+
+                <div class="track">
+                    <div class="track-number">02</div>
+                    <div class="track-info">
+                        <div class="track-name">🥁 Drums</div>
+                        <div class="track-type">Instrument</div>
+                    </div>
+                    <div class="track-controls">
+                        <button class="track-btn" title="Mute">M</button>
+                        <button class="track-btn" title="Solo">S</button>
+                        <button class="track-btn" title="Record">●</button>
+                    </div>
+                </div>
+
+                <div class="track">
+                    <div class="track-number">03</div>
+                    <div class="track-info">
+                        <div class="track-name">🎸 Guitar</div>
+                        <div class="track-type">Audio</div>
+                    </div>
+                    <div class="track-controls">
+                        <button class="track-btn" title="Mute">M</button>
+                        <button class="track-btn" title="Solo">S</button>
+                        <button class="track-btn" title="Record">●</button>
+                    </div>
+                </div>
+
+                <div class="track">
+                    <div class="track-number">04</div>
+                    <div class="track-info">
+                        <div class="track-name">🎤 Vocals</div>
+                        <div class="track-type">Audio</div>
+                    </div>
+                    <div class="track-controls">
+                        <button class="track-btn" title="Mute">M</button>
+                        <button class="track-btn" title="Solo">S</button>
+                        <button class="track-btn" title="Record">●</button>
+                    </div>
+                </div>
+
+                <div class="track">
+                    <div class="track-number">05</div>
+                    <div class="track-info">
+                        <div class="track-name">🎻 Strings</div>
+                        <div class="track-type">Instrument</div>
+                    </div>
+                    <div class="track-controls">
+                        <button class="track-btn" title="Mute">M</button>
+                        <button class="track-btn" title="Solo">S</button>
+                        <button class="track-btn" title="Record">●</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mixer Section -->
+        <section class="mixer-section glass">
+            <div class="section-title">
+                <span class="material-icons">graphic_eq</span> Mixer
+            </div>
+            <div class="mixer-channels">
+                <div class="channel">
+                    <div class="channel-name">Master</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 40%;"></div>
+                    </div>
+                    <div class="channel-level">0dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">Piano</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 50%;"></div>
+                    </div>
+                    <div class="channel-level">-3dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">Drums</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 45%;"></div>
+                    </div>
+                    <div class="channel-level">-1dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">Guitar</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 55%;"></div>
+                    </div>
+                    <div class="channel-level">-5dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">Vocals</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 35%;"></div>
+                    </div>
+                    <div class="channel-level">+2dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">Strings</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 50%;"></div>
+                    </div>
+                    <div class="channel-level">0dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">FX Send</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 60%;"></div>
+                    </div>
+                    <div class="channel-level">-8dB</div>
+                </div>
+
+                <div class="channel">
+                    <div class="channel-name">Sub</div>
+                    <div class="fader">
+                        <div class="fader-thumb" style="top: 48%;"></div>
+                    </div>
+                    <div class="channel-level">-2dB</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Effects Section -->
+        <section class="effects-section glass">
+            <div class="section-title">
+                <span class="material-icons">tune</span> Effects & Plugins
+            </div>
+            <div class="effects-grid">
+                <div class="effect-slot active">
+                    <div class="effect-name">🌊 Reverb Pro</div>
+                    <div class="effect-params">Room: Large | Wet: 35%</div>
+                </div>
+
+                <div class="effect-slot">
+                    <div class="effect-name">⏱️ Delay Stereo</div>
+                    <div class="effect-params">Time: 500ms | Feedback: 40%</div>
+                </div>
+
+                <div class="effect-slot">
+                    <div class="effect-name">🔥 Distortion</div>
+                    <div class="effect-params">Drive: 45% | Mix: 60%</div>
+                </div>
+
+                <div class="effect-slot active">
+                    <div class="effect-name">📈 EQ 8-Band</div>
+                    <div class="effect-params">Presence: +4dB</div>
+                </div>
+
+                <div class="effect-slot">
+                    <div class="effect-name">⬇️ Compressor</div>
+                    <div class="effect-params">Ratio: 4:1 | Makeup: +2dB</div>
+                </div>
+
+                <div class="effect-slot">
+                    <div class="effect-name">👯 Chorus</div>
+                    <div class="effect-params">Speed: 1.2Hz | Depth: 25%</div>
+                </div>
+
+                <div class="effect-slot">
+                    <div class="effect-name">✈️ Flanger</div>
+                    <div class="effect-params">Rate: 0.8Hz | Feedback: 50%</div>
+                </div>
+
+                <div class="effect-slot">
+                    <div class="effect-name">🎯 Limiter</div>
+                    <div class="effect-params">Threshold: -3dB</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="timeline-section glass">
+            <div class="section-title">
+                <span class="material-icons">schedule</span> Timeline & Sequencer
+            </div>
+
+            <div class="timeline-header">
+                <div class="tempo-display">
+                    <div class="tempo-value">120</div>
+                    <div class="tempo-label">BPM</div>
+                </div>
+
+                <div class="time-display">
+                    <div class="time-value">01:24.500</div>
+                    <div class="time-label">Position</div>
+                </div>
+
+                <div class="playback-buttons">
+                    <button class="playback-btn" title="Rewind">
+                        <span class="material-icons">fast_rewind</span>
+                    </button>
+                    <button class="playback-btn play" title="Play" id="playBtn">
+                        <span class="material-icons">play_arrow</span>
+                    </button>
+                    <button class="playback-btn" title="Record">
+                        <span class="material-icons">fiber_manual_record</span>
+                    </button>
+                    <button class="playback-btn" title="Stop">
+                        <span class="material-icons">stop</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="piano-roll" id="pianoRoll"></div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        // Generate Piano Roll
+        const pianoRoll = document.getElementById('pianoRoll');
+        for (let i = 0; i < 16; i++) {
+            const note = document.createElement('div');
+            note.className = 'piano-note';
+            note.addEventListener('click', function() {
+                this.classList.toggle('active');
+                playSound();
+            });
+            note.addEventListener('mouseenter', function() {
+                if (isMouseDown) {
+                    this.classList.toggle('active');
+                    playSound();
+                }
+            });
+            pianoRoll.appendChild(note);
+        }
+
+        // Mouse tracking for drag selection
+        let isMouseDown = false;
+        document.addEventListener('mousedown', () => { isMouseDown = true; });
+        document.addEventListener('mouseup', () => { isMouseDown = false; });
+
+        // Play Sound Function
+        function playSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = 'triangle';
+            oscillator.frequency.value = 440 + Math.random() * 200;
+
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // Track Selection
+        document.querySelectorAll('.track').forEach(track => {
+            track.addEventListener('click', function() {
+                document.querySelectorAll('.track').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Effect Slot Activation
+        document.querySelectorAll('.effect-slot').forEach(slot => {
+            slot.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Fader Interaction
+        document.querySelectorAll('.fader').forEach(fader => {
+            let isDragging = false;
+            const thumb = fader.querySelector('.fader-thumb');
+            const levelDisplay = fader.parentElement.querySelector('.channel-level');
+
+            fader.addEventListener('mousedown', () => { isDragging = true; });
+            document.addEventListener('mouseup', () => { isDragging = false; });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const rect = fader.getBoundingClientRect();
+                const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+                const percent = (y / rect.height) * 100;
+
+                thumb.style.top = percent + '%';
+                const db = Math.round((1 - (percent / 100)) * 24 - 12);
+                levelDisplay.textContent = (db > 0 ? '+' : '') + db + 'dB';
+            });
+        });
+
+        // Play Button Animation
+        document.getElementById('playBtn').addEventListener('click', function() {
+            this.classList.toggle('recording');
+        });
+
+        // GSAP Animations
+        gsap.from('.header', { duration: 0.8, y: -30, opacity: 0, ease: 'power2.out' });
+        gsap.from(['.daw-section', '.mixer-section', '.effects-section', '.timeline-section'], {
+            duration: 0.8,
+            y: 30,
+            opacity: 0,
+            stagger: 0.1,
+            ease: 'power2.out',
+            delay: 0.2
+        });
+
+        // Hover Effects
+        document.querySelectorAll('.glass-hover').forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                gsap.to(this, { duration: 0.3, y: -4, overwrite: 'auto' });
+            });
+            el.addEventListener('mouseleave', function() {
+                gsap.to(this, { duration: 0.3, y: 0, overwrite: 'auto' });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "name": "duck-ecosystem",
+  "version": "0.1.0",
+  "description": "Ecossistema Real de Produção Musical - DAW Web Profissional",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend & npm run dev --workspace=backend",
+    "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
+    "start": "npm start --workspace=backend",
+    "test": "npm test --workspace=frontend && npm test --workspace=backend",
+    "lint": "npm run lint --workspace=frontend && npm run lint --workspace=backend",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "setup": "npm install && npm run install-all",
+    "install-all": "npm install --workspace=frontend && npm install --workspace=backend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "music production",
+    "daw",
+    "audio",
+    "web audio",
+    "producer",
+    "composição",
+    "música",
+    "beat making"
+  ],
+  "author": "DUCK Music Ecosystem",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/duck"
+  }
+}

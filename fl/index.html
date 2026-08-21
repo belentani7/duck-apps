@@ -138,6 +138,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
     <div id="tabs">
       <div class="on" onclick="goTab('pianoroll',this)">🎹 PIANO ROLL</div>
       <div onclick="goTab('playlist',this)">🎵 PLAYLIST</div>
+      <div onclick="goTab('recorder',this)">🎙 REC</div>
     </div>
     <div id="view">
       <div class="view-panel on" id="p-pianoroll">
@@ -156,17 +157,46 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
           <div id="pr-status"></div>
         </div>
       </div>
-      <div class="view-panel" id="p-playlist">
-        <div id="playlist">
-          <div id="pl-toolbar">
-            <span class="lbl">Playlist de arranjo — clique numa linha p/ adicionar bloco do pattern</span>
-            <div class="spacer" style="flex:1"></div>
-            <div class="btn" onclick="plClear()">🗑 Limpar</div>
+        <div class="view-panel" id="p-playlist">
+          <div id="playlist">
+            <div id="pl-toolbar">
+              <span class="lbl">Playlist de arranjo — clique numa linha p/ adicionar bloco do pattern</span>
+              <div class="spacer" style="flex:1"></div>
+              <div class="btn" onclick="plClear()">🗑 Limpar</div>
+            </div>
+            <div id="plWrap"><canvas id="plCanvas"></canvas></div>
           </div>
-          <div id="plWrap"><canvas id="plCanvas"></canvas></div>
+        </div>
+
+        <!-- RECORDER TAB -->
+        <div class="view-panel" id="p-recorder">
+          <div id="recorder">
+            <div id="rec-toolbar" style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--line)">
+              <span class="lbl">🎙 Micrófono:</span>
+              <select id="micSelect" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:4px 6px;border-radius:4px;font-size:11px;outline:none"></select>
+              <button class="btn" onclick="refreshMics()" style="font-size:10px;padding:4px 10px">↻</button>
+              <div style="flex:1"></div>
+              <button class="btn" id="btnRec" onclick="toggleRec()" style="background:var(--bg);color:var(--red);font-weight:700">● GRAVAR</button>
+            </div>
+            <div style="padding:6px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px">
+              <span class="lbl">Tempo: </span>
+              <span id="recTime" style="font-family:Consolas,monospace;font-size:18px;color:var(--accent2)">00:00.0</span>
+              <span class="lbl">Nível:</span>
+              <div id="recLevel" style="flex:1;height:8px;background:var(--panel2);border:1px solid var(--line);	border-radius:4px;overflow:hidden">
+                <div id="recLevelFill" style="width:20%;height:100%;background:var(--accent2);transition:width .1s"></div>
+              </div>
+              <span class="lbl" id="recStatus">Pronto</span>
+            </div>
+            <div id="recWaveWrap" style="flex:1;overflow:auto">
+              <canvas id="recCanvas" width="800" height="100"></canvas>
+            </div>
+            <div id="recTakes" style="padding:6px 10px;border-top:1px solid var(--line);overflow-y:auto;max-height:100px">
+              <div class="lbl">Takes gravados:</div>
+              <div id="takesList" style="margin-top:4px;font-size:10px;color:var(--dim)">Nenhum take ainda</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 
   <div id="mixer">
@@ -811,7 +841,8 @@ function goTab(id,el){
   el.classList.add('on');
   document.getElementById('p-'+id).classList.add('on');
   if(id==='pianoroll'){ const cv=document.getElementById('prCanvas'); if(cv._redraw)cv._redraw(); }
-  else { const cv=document.getElementById('plCanvas'); if(cv._redraw)cv._redraw(); }
+  else if(id==='playlist'){ const cv=document.getElementById('plCanvas'); if(cv._redraw)cv._redraw(); }
+  else if(id==='recorder'){ initRecorderView(); }
 }
 
 // ================== KEYBOARD PREVIEW ==================
@@ -935,6 +966,203 @@ function encodeWAV(buf,sr){
   for(let c=0;c<nch;c++) chans.push(buf.getChannelData(c));
   for(let i=0;i<len;i++){ for(let c=0;c<nch;c++){ let s=clamp(chans[c][i],-1,1); v.setInt16(off,s<0?s*0x8000:s*0x7fff,true); off+=2; } }
   return ab;
+}
+
+// ================== AUDIO RECORDER ==================
+let mediaStream=null, mediaRecorder=null, recChunks=[], recStartTime=0, recTimerId=null;
+let recCanvasCtx=null, recAnimationFrameId=null, recAnalyzer=null, recSource=null;
+let recordedTakes=[];
+
+// Constraints optimized for ALL microphone types (desktop, USB, XLR via interface, bluetooth)
+// Disables echo canceling AG auto gain so raw signal preserved
+const MIC_CONSTRAINTS = {
+  audio: {
+    deviceId: { ideal: null }, // set per selection
+    sampleRate: { ideal: 48000 },
+    channelCount: { ideal: 2 },
+    autoGainControl: { ideal: false },
+    echoCancellation: { ideal: false },
+    noiseSuppression: { ideal: false },
+    latency: { ideal: 0.01 },
+  }
+};
+
+async function refreshMics(){
+  const sel=document.getElementById('micSelect');
+  sel.innerHTML='';
+  try{
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const mics = devices.filter(d=>d.kind==='audioinput');
+    if(mics.length===0){
+      sel.innerHTML='<option>Sem microfone detectado</option>';
+      document.getElementById('stHint').textContent='⚠️ Nenhum microfone encontrado';
+      return;
+    }
+    const defOpt=document.createElement('option');
+    defOpt.value='default'; defOpt.textContent='🎤 Padrão do sistema';
+    sel.appendChild(defOpt);
+    mics.forEach((m,i)=>{
+      const opt=document.createElement('option');
+      opt.value=m.deviceId;
+      opt.textContent=(m.label||`Mic ${i+1}`)+' · '+m.deviceId.slice(0,8);
+      sel.appendChild(opt);
+    });
+    document.getElementById('stHint').textContent='✅ Microfones listados';
+  }catch(e){
+    sel.innerHTML='<option>Erro ao acessar microfones</option>';
+    console.error('enumerateDevices',e);
+  }
+}
+
+function initRecorderView(){
+  if(!mediaStream){ refreshMics(); }
+  const cv=document.getElementById('recCanvas');
+  recCanvasCtx=cv.getContext('2d');
+}
+
+async function toggleRec(){
+  const btn=document.getElementById('btnRec');
+  if(mediaRecorder && mediaRecorder.state==='recording'){
+    stopRecorder(); return;
+  }
+  await startRecorder();
+}
+
+async function startRecorder(){
+  if(!AC){ initAudio(); }
+  const sel=document.getElementById('micSelect');
+  const devId = (sel? sel.value : 'default');
+  const constraints = JSON.parse(JSON.stringify(MIC_CONSTRAINTS));
+  constraints.audio.deviceId = devId!=='default' ? { exact: devId } : undefined;
+  try{
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+    // connect audio to Web Audio ctx for waveform viz
+    if(!recSource){
+      recSource = AC.createMediaStreamSource(mediaStream);
+      recAnalyzer = AC.createAnalyser();
+      recAnalyzer.fftSize = 256;
+      recSource.connect(recAnalyzer);
+      recSource.connect(masterOut); // route mic to mix bus → hear recording
+    }
+    // MediaRecorder for capture
+    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm;codecs=opus' });
+    recChunks = [];
+    mediaRecorder.ondataavailable = e=>{ if(e.data.size>0) recChunks.push(e.data); };
+    mediaRecorder.onstop = handleRecStop;
+    mediaRecorder.start(50); // 50ms timeslice
+    recStartTime = performance.now();
+    recTimerId = setInterval(updateRecTimer, 100);
+    btn.textContent = '■ PARAR'; btn.style.background = 'var(--red)'; btn.style.color='#fff';
+    document.getElementById('recStatus').textContent='Gravando...';
+    document.getElementById('stHint').textContent='🎙 Gravando áudio';
+    recAnimationFrameId = requestAnimationFrame(drawRecWave);
+  }catch(e){
+    console.error('getUserMedia',e);
+    document.getElementById('stHint').textContent='⚠️ Micrófono negado ou indisponível';
+    alert('Não foi possível acessar o microfone.\\nPermita o acesso e selecione outro dispositivo.');
+  }
+}
+
+function stopRecorder(){
+  if(mediaRecorder && mediaRecorder.state==='recording'){
+    mediaRecorder.stop();
+  }
+}
+
+function updateRecTimer(){
+  const ms = Math.floor(performance.now()-recStartTime);
+  const s = Math.floor(ms/1000);
+  const m = Math.floor(s/60);
+  const sc = s%60;
+  const ds = Math.floor((ms%1000)/100);
+  document.getElementById('recTime').textContent = `${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}.${ds}`;
+}
+
+function drawRecWave(){
+  if(!recAnalyzer){ return; }
+  const cv=document.getElementById('recCanvas');
+  const ctx=recCanvasCtx;
+  const W=cv.width, H=cv.height;
+  const data=new Uint8Array(recAnalyzer.frequencyBinCount);
+  const levelCalc=()=>{ let s=0; data.forEach(v=>s+=v); return data.length>0 ? s/(data.length*255) : 0; };
+  ctx.fillStyle='#0a0e14';
+  requestAnimationFrame(()=>{
+    recAnalyzer.getByteFrequencyData(data);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d1218'; ctx.fillRect(0,0,W,H);
+    const step=Math.ceil(data.length/W);
+    ctx.beginPath();
+    for(let i=0;i<W;i++){
+      const idx=i*step;
+      const v=(data[idx]||0)/255;
+      const y=H/2-v*(H/2-4);
+      if(i===0) ctx.moveTo(i,y); else ctx.lineTo(i,y);
+    }
+    for(let i=0;i<W;i++){
+      const idx=i*step;
+      const v=(data[idx]||0)/255;
+      const y=H/2+v*(H/2-4);
+      ctx.lineTo(i,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle='var(--accent2)';
+    ctx.fill();
+    ctx.strokeStyle='var(--accent)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    const lvl=levelCalc();
+    const fill=document.getElementById('recLevelFill');
+    if(fill){ fill.style.width=Math.round(lvl*100)+'%'; }
+    if(mediaRecorder && mediaRecorder.state==='recording' && recAnalyzer){
+      recAnimationFrameId=requestAnimationFrame(drawRecWave);
+    }
+  })();
+}
+
+function handleRecStop(){
+  clearInterval(recTimerId);
+  recTimerId=null;
+  if(recAnimationFrameId) cancelAnimationFrame(recAnimationFrameId);
+  recAnimationFrameId=null;
+  const btn=document.getElementById('btnRec');
+  btn.textContent='● GRAVAR'; btn.style.background='var(--bg)'; btn.style.color='var(--red)';
+  document.getElementById('recStatus').textContent='Parado';
+  document.getElementById('stHint').textContent='✅ Gravação concluída';
+  if(recChunks.length===0){ return; }
+  // Convert recorded webm/opus chunks → WAV via Web Audio
+  const blob = new Blob(recChunks, { type: 'audio/webm;codecs=opus' });
+  const fileObj = { blob, ts: new Date(), duration: document.getElementById('recTime').textContent, id: recordedTakes.length };
+  recordedTakes.push(fileObj);
+  // Update takes list
+  const list=document.getElementById('takesList');
+  list.innerHTML = recordedTakes.map(t=>`<div>Take ${t.id+1} · ${t.duration} · <a href="#" onclick="exportRecTake(${t.id});return false">💾 WAV</a></div>`).join('');
+  // Clear chunks
+  recChunks = [];
+}
+
+async function exportRecTake(takeId){
+  const take=recordedTakes[takeId];
+  if(!take){ return; }
+  try{
+    // Decode recorded webm → AudioBuffer → re-encode to WAV
+    const arrayBuf = await take.blob.arrayBuffer();
+    const audioBuf = await AC.decodeAudioData(arrayBuf);
+    const wav=encodeWAV(audioBuf, AC.sampleRate);
+    const wavBlob=new Blob([wav],{type:'audio/wav'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(wavBlob);
+    a.download=`duck-rec-take-${takeId+1}.wav`;
+    a.click();
+    document.getElementById('stHint').textContent=`🎧 Take ${takeId+1} exportado!`;
+  }catch(e){
+    console.error('exportRecTake',e);
+    // Fallback: just download the recorded blob directly
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(take.blob);
+    a.download=`duck-rec-take-${takeId+1}.webm`;
+    a.click();
+    document.getElementById('stHint').textContent=`⚠️ Exportado como WEBM (fallback)`;
+  }
 }
 
 // ================== INIT ==================

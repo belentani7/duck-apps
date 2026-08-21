@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DUCK - Ecossistema Real de Produção Musical">
+  <meta name="theme-color" content="#060907">
+  <title>DUCK - Produtor Musical Profissional</title>
+
+  <link rel="icon" type="image/png" href="./assets/duck-logo.png">
+  <link rel="stylesheet" href="./assets/duck.css">
+  <style>
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .main-canvas {
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      background: var(--bg);
+    }
+
+    .sequencer-container {
+      flex: 1;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .transport-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      flex-wrap: wrap;
+    }
+
+    .tempo-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tempo-display {
+      font: 800 1.2rem/1 var(--font-mono);
+      color: var(--green);
+      min-width: 60px;
+    }
+
+    .position-display {
+      color: var(--muted);
+      font: 700 0.75rem/1 var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .right-panel {
+      width: 300px;
+      border-left: 1px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-section {
+      flex: 1;
+      border-bottom: 1px solid var(--line);
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .panel-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font: 800 0.7rem/1 var(--font-mono);
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .track-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .track-item {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--panel-2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .track-item:hover {
+      border-color: var(--green);
+      background: var(--panel-3);
+    }
+
+    .track-item.active {
+      border-color: var(--green);
+      background: rgba(0, 232, 129, 0.1);
+    }
+
+    .instrument-browser {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .instrument-card {
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: var(--panel-2);
+      text-align: center;
+      cursor: pointer;
+      font: 700 0.6rem/1 var(--font-mono);
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .instrument-card:hover {
+      border-color: var(--green);
+      color: var(--green-soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- TopBar -->
+    <div class="topbar">
+      <a href="/" class="brand">
+        <img src="./assets/duck-logo.png" alt="DUCK Logo">
+        <div class="brand-copy">
+          <strong>DUCK</strong>
+          <span>v0.1.0 Beta</span>
+        </div>
+      </a>
+
+      <div class="top-actions">
+        <div class="engine-state">
+          <span>Engine Pronto</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Studio Layout -->
+    <div class="studio-grid">
+      <!-- Left: Main Canvas -->
+      <div class="main-canvas">
+        <!-- Sequencer -->
+        <div class="sequencer-container">
+          <div class="rack">
+            <div class="rack-head">
+              <h2>Sequenciador <span class="rack-id">[16 Passos]</span></h2>
+            </div>
+
+            <!-- Drum Track -->
+            <div class="track">
+              <div class="track-name">Kick</div>
+              <div class="steps" id="drum-track">
+                <div class="step" data-step="0"></div>
+                <div class="step" data-step="1"></div>
+                <div class="step" data-step="2"></div>
+                <div class="step" data-step="3"></div>
+                <div class="step" data-step="4"></div>
+                <div class="step" data-step="5"></div>
+                <div class="step" data-step="6"></div>
+                <div class="step" data-step="7"></div>
+                <div class="step" data-step="8"></div>
+                <div class="step" data-step="9"></div>
+                <div class="step" data-step="10"></div>
+                <div class="step" data-step="11"></div>
+                <div class="step" data-step="12"></div>
+                <div class="step" data-step="13"></div>
+                <div class="step" data-step="14"></div>
+                <div class="step" data-step="15"></div>
+              </div>
+            </div>
+
+            <!-- Snare Track -->
+            <div class="track">
+              <div class="track-name">Snare</div>
+              <div class="steps" id="snare-track">
+                <div class="step" data-step="0"></div>
+                <div class="step" data-step="1"></div>
+                <div class="step" data-step="2"></div>
+                <div class="step" data-step="3"></div>
+                <div class="step" data-step="4"></div>
+                <div class="step" data-step="5"></div>
+                <div class="step" data-step="6"></div>
+                <div class="step" data-step="7"></div>
+                <div class="step" data-step="8"></div>
+                <div class="step" data-step="9"></div>
+                <div class="step" data-step="10"></div>
+                <div class="step" data-step="11"></div>
+                <div class="step" data-step="12"></div>
+                <div class="step" data-step="13"></div>
+                <div class="step" data-step="14"></div>
+                <div class="step" data-step="15"></div>
+              </div>
+            </div>
+
+            <!-- Hi-Hat Track -->
+            <div class="track">
+              <div class="track-name">HiHat</div>
+              <div class="steps" id="hihat-track">
+                <div class="step" data-step="0"></div>
+                <div class="step" data-step="1"></div>
+                <div class="step" data-step="2"></div>
+                <div class="step" data-step="3"></div>
+                <div class="step" data-step="4"></div>
+                <div class="step" data-step="5"></div>
+                <div class="step" data-step="6"></div>
+                <div class="step" data-step="7"></div>
+                <div class="step" data-step="8"></div>
+                <div class="step" data-step="9"></div>
+                <div class="step" data-step="10"></div>
+                <div class="step" data-step="11"></div>
+                <div class="step" data-step="12"></div>
+                <div class="step" data-step="13"></div>
+                <div class="step" data-step="14"></div>
+                <div class="step" data-step="15"></div>
+              </div>
+            </div>
+
+            <!-- Bass Track -->
+            <div class="track">
+              <div class="track-name">Bass</div>
+              <div class="steps" id="bass-track">
+                <div class="step" data-step="0"></div>
+                <div class="step" data-step="1"></div>
+                <div class="step" data-step="2"></div>
+                <div class="step" data-step="3"></div>
+                <div class="step" data-step="4"></div>
+                <div class="step" data-step="5"></div>
+                <div class="step" data-step="6"></div>
+                <div class="step" data-step="7"></div>
+                <div class="step" data-step="8"></div>
+                <div class="step" data-step="9"></div>
+                <div class="step" data-step="10"></div>
+                <div class="step" data-step="11"></div>
+                <div class="step" data-step="12"></div>
+                <div class="step" data-step="13"></div>
+                <div class="step" data-step="14"></div>
+                <div class="step" data-step="15"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transport Controls -->
+        <div class="transport-bar">
+          <button class="btn" id="play-btn">▶ Play</button>
+          <button class="btn" id="stop-btn">⏹ Stop</button>
+
+          <div class="tempo-control">
+            <label for="tempo">BPM:</label>
+            <input type="number" id="tempo" min="40" max="240" value="120" style="width: 60px;">
+            <span class="tempo-display" id="tempo-display">120</span>
+          </div>
+
+          <div class="position-display">
+            <span id="position">0:1</span> / <span id="total-bars">8</span> Compassos
+          </div>
+
+          <button class="btn" id="export-btn" style="margin-left: auto;">📥 Exportar</button>
+        </div>
+      </div>
+
+      <!-- Right Panel: Mixer & Instruments -->
+      <div class="right-panel">
+        <!-- Mixer Section -->
+        <div class="panel-section">
+          <div class="section-title">Mixer</div>
+          <div class="control-grid">
+            <div class="control">
+              <label>Kick</label>
+              <input type="range" min="0" max="100" value="80">
+              <output>80</output>
+            </div>
+            <div class="control">
+              <label>Snare</label>
+              <input type="range" min="0" max="100" value="70">
+              <output>70</output>
+            </div>
+            <div class="control">
+              <label>HiHat</label>
+              <input type="range" min="0" max="100" value="60">
+              <output>60</output>
+            </div>
+            <div class="control">
+              <label>Bass</label>
+              <input type="range" min="0" max="100" value="85">
+              <output>85</output>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instruments Section -->
+        <div class="panel-section">
+          <div class="section-title">Instrumentos</div>
+          <div class="instrument-browser">
+            <div class="instrument-card" data-instrument="kick">Kick</div>
+            <div class="instrument-card" data-instrument="snare">Snare</div>
+            <div class="instrument-card" data-instrument="hihat">Hi-Hat</div>
+            <div class="instrument-card" data-instrument="tom">Tom</div>
+            <div class="instrument-card" data-instrument="bass">Bass</div>
+            <div class="instrument-card" data-instrument="synth">Synth</div>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="panel-section">
+          <div class="section-title">Status</div>
+          <div class="status-line" id="status-line">
+            Sistema pronto | Sequenciador ativo
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts em ordem de dependência -->
+  <script src="./assets/gsap.min.js"></script>
+  <script src="./js/audio-engine.js"></script>
+  <script src="./js/main.js"></script>
+
+  <script>
+    // Info de inicialização no console
+    console.log(`
+%c╔══════════════════════════════════════╗
+║ 🦆 DUCK v0.1.0 Beta                   ║
+║ Ecossistema de Produção Musical      ║
+╚══════════════════════════════════════╝`, 'color: #00e881; font-weight: bold; font-size: 12px;');
+
+    console.log(`
+%c📖 Como usar:
+1. Clique nos passos (quadrados) para ativar notas
+2. Ajuste o BPM usando o controle de tempo
+3. Clique em um instrumento para ouvir preview
+4. Pressione PLAY para começar a sequência
+
+%c🎮 API disponível em window.duck
+Exemplos:
+  duck.playAllInstruments()      - Toca todos os sons
+  duck.audioEngine.getInfo()     - Info do áudio
+  duck.state                     - Estado atual`, 'color: #7cffbd; font-size: 11px;', 'color: #ff9d3d; font-size: 11px;');
+  </script>
+</body>
+</html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUCK STUDIO ANIMATED - Produção Musical com Animações Totais</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --neon-primary: #00ff9d;
+            --neon-secondary: #00d97e;
+            --neon-accent: #00ffcc;
+            --neon-purple: #bb00ff;
+            --neon-pink: #ff0080;
+            --neon-cyan: #00d9ff;
+            --neon-glow: rgba(0, 255, 157, 0.5);
+            --neon-glow-strong: rgba(0, 255, 157, 0.8);
+            --glass-bg: rgba(15, 26, 13, 0.4);
+            --glass-border: rgba(0, 255, 157, 0.2);
+            --bg-primary: #050505;
+            --text-primary: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* ANIMATED BACKGROUND */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at top left, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(0, 255, 204, 0.08) 0%, transparent 50%);
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .grid-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridScroll 20s linear infinite;
+        }
+
+        @keyframes gridScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        /* GLASS EFFECT COM ANIMAÇÃO */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass:hover {
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.5), inset 0 0 20px rgba(0, 255, 157, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .app-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto 1fr auto;
+            width: 100%;
+            height: 100vh;
+            gap: 12px;
+            padding: 12px;
+        }
+
+        /* HEADER ANIMATION */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-radius: 16px;
+            animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 157, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(0, 255, 157, 0.8); }
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding: 12px;
+            border-radius: 16px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+        .section:nth-child(5) { animation-delay: 0.4s; }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 157, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(0, 255, 157, 0.8); }
+        }
+
+        /* BUTTON ANIMATIONS */
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--neon-primary);
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.1), rgba(0, 255, 157, 0.05));
+            color: var(--neon-primary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.3), rgba(0, 255, 157, 0.15));
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.5), inset 0 0 15px rgba(0, 255, 157, 0.2);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.95);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+        }
+
+        /* PAD ANIMATIONS */
+        .pad {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(187, 0, 255, 0.2), rgba(255, 0, 128, 0.2));
+            border: 2px solid var(--neon-purple);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--neon-purple);
+            font-size: 11px;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pad::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(187, 0, 255, 0.5), transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .pad:hover {
+            background: linear-gradient(135deg, rgba(187, 0, 255, 0.4), rgba(255, 0, 128, 0.4));
+            box-shadow: 0 0 25px rgba(187, 0, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .pad:active {
+            animation: padPress 0.3s ease;
+        }
+
+        @keyframes padPress {
+            0% { transform: scale(1.1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        /* KEY ANIMATIONS */
+        .key {
+            flex: 1;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.05));
+            border: 2px solid var(--neon-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-size: 9px;
+            color: var(--neon-primary);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .key::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-primary), transparent);
+            animation: keyGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes keyGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .key:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 255, 136, 0.15));
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), inset 0 0 10px rgba(0, 255, 136, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .key:active {
+            animation: keyPress 0.2s ease;
+        }
+
+        @keyframes keyPress {
+            0% { transform: translateY(-5px); }
+            50% { transform: translateY(2px); }
+            100% { transform: translateY(-3px); }
+        }
+
+        /* DISPLAY ANIMATION */
+        .display {
+            background: linear-gradient(180deg, rgba(0, 20, 40, 0.9), rgba(0, 10, 20, 0.95));
+            border: 2px solid var(--neon-primary);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-primary);
+            font-size: 11px;
+            min-height: 60px;
+            box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.2), 0 0 20px rgba(0, 255, 136, 0.2);
+            animation: displayFlicker 3s ease-in-out infinite;
+        }
+
+        @keyframes displayFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+        }
+
+        /* WAVEFORM ANIMATION */
+        .waveform {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 2px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--neon-primary), var(--neon-accent));
+            border-radius: 1px;
+            min-height: 2px;
+            transition: height 0.05s ease;
+            box-shadow: 0 0 10px var(--neon-glow);
+            animation: barWave 2s ease-in-out infinite;
+        }
+
+        .bar:nth-child(1) { animation-delay: 0s; }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.3s; }
+        .bar:nth-child(5) { animation-delay: 0.4s; }
+        .bar:nth-child(6) { animation-delay: 0.5s; }
+        .bar:nth-child(7) { animation-delay: 0.4s; }
+        .bar:nth-child(8) { animation-delay: 0.3s; }
+        .bar:nth-child(9) { animation-delay: 0.2s; }
+        .bar:nth-child(10) { animation-delay: 0.1s; }
+        .bar:nth-child(11) { animation-delay: 0s; }
+        .bar:nth-child(12) { animation-delay: 0.1s; }
+        .bar:nth-child(13) { animation-delay: 0.2s; }
+        .bar:nth-child(14) { animation-delay: 0.3s; }
+        .bar:nth-child(15) { animation-delay: 0.4s; }
+        .bar:nth-child(16) { animation-delay: 0.5s; }
+
+        @keyframes barWave {
+            0%, 100% { height: 20%; }
+            50% { height: 80%; }
+        }
+
+        /* KNOB ANIMATION */
+        .knob {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(from 180deg, rgba(0, 255, 157, 0.2), rgba(0, 255, 157, 0.4), rgba(0, 255, 157, 0.2));
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--neon-primary);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: knobSpin 20s linear infinite;
+        }
+
+        @keyframes knobSpin {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 157, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 157, 0.6); }
+        }
+
+        .knob::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: var(--neon-primary);
+            border-radius: 2px;
+            position: absolute;
+            top: 8px;
+            animation: knobRotate 4s linear infinite;
+        }
+
+        @keyframes knobRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .knob:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.7);
+        }
+
+        /* SLIDER ANIMATION */
+        .slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slider-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-accent));
+            border-radius: 2px;
+            width: 50%;
+            animation: sliderGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes sliderGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 157, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 157, 0.6); }
+        }
+
+        /* SEQUENCER STEP ANIMATION */
+        .seq-step {
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: stepBounce 2s ease-in-out infinite;
+        }
+
+        .seq-step:nth-child(odd) { animation-delay: 0s; }
+        .seq-step:nth-child(even) { animation-delay: 0.1s; }
+
+        @keyframes stepBounce {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 157, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(0, 255, 157, 0.5); }
+        }
+
+        .seq-step:hover {
+            background: rgba(0, 255, 157, 0.3);
+            transform: scale(1.1);
+        }
+
+        .seq-step.active {
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-accent));
+            box-shadow: 0 0 25px rgba(0, 255, 157, 0.8);
+            animation: activeStep 0.6s ease-in-out;
+        }
+
+        @keyframes activeStep {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* PARTICLE EFFECT */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) translateX(var(--tx));
+            }
+        }
+
+        /* GRID LAYOUT */
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .grid-8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+        .flex { display: flex; gap: 8px; }
+        .flex-col { display: flex; flex-direction: column; gap: 8px; }
+
+        /* STATUS ANIMATION */
+        .status-item {
+            padding: 6px 10px;
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            animation: statusPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { background: rgba(0, 255, 157, 0.05); }
+            50% { background: rgba(0, 255, 157, 0.1); }
+        }
+
+        .status-item:hover {
+            background: rgba(0, 255, 157, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+        }
+
+        /* RECORD INDICATOR ANIMATION */
+        .record-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff0055;
+            animation: recordPulse 1s ease-in-out infinite;
+            box-shadow: 0 0 10px #ff0055;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px #ff0055; }
+            50% { opacity: 0.3; box-shadow: 0 0 20px #ff0055; }
+        }
+
+        /* SCROLL BAR ANIMATION */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-primary);
+            border-radius: 3px;
+            animation: scrollThumbGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollThumbGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 157, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(0, 255, 157, 0.6); }
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-accent);
+        }
+
+        /* BOUNCE ANIMATION */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ROTATE ANIMATION */
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* FLOAT ANIMATION */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1400px) {
+            .app-wrapper { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .app-wrapper { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-pattern"></div>
+
+    <div class="app-wrapper">
+        <!-- HEADER -->
+        <header class="header glass">
+            <div class="logo">
+                🦆 DUCK STUDIO ANIMATED
+            </div>
+            <div class="display">
+                <div><span class="record-indicator"></span> Status: <span id="status">READY</span></div>
+                <div>BPM: <span id="bpm">120</span> | CPU: <span id="cpu">15%</span></div>
+            </div>
+            <div class="flex">
+                <button class="btn" onclick="toggleRecord()">🔴 REC</button>
+                <button class="btn" onclick="togglePlay()">▶️ PLAY</button>
+                <button class="btn" onclick="resetStudio()">⟲ RESET</button>
+            </div>
+        </header>
+
+        <!-- PIANO SECTION -->
+        <section class="section glass">
+            <div class="section-title">🎹 MIDI Piano</div>
+            <div class="display" id="pianoDisplay">C4 ♪</div>
+            <div class="flex" style="flex-wrap: wrap; max-height: 120px; overflow-y: auto;">
+                <button class="key" onclick="playNote(261.63, this)">C3</button>
+                <button class="key" onclick="playNote(293.66, this)">D3</button>
+                <button class="key" onclick="playNote(329.63, this)">E3</button>
+                <button class="key" onclick="playNote(349.23, this)">F3</button>
+                <button class="key" onclick="playNote(392.00, this)">G3</button>
+                <button class="key" onclick="playNote(440.00, this)">A3</button>
+                <button class="key" onclick="playNote(493.88, this)">B3</button>
+                <button class="key" onclick="playNote(523.25, this)">C4</button>
+                <button class="key" onclick="playNote(587.33, this)">D4</button>
+                <button class="key" onclick="playNote(659.25, this)">E4</button>
+                <button class="key" onclick="playNote(698.46, this)">F4</button>
+                <button class="key" onclick="playNote(783.99, this)">G4</button>
+                <button class="key" onclick="playNote(880.00, this)">A4</button>
+                <button class="key" onclick="playNote(987.77, this)">B4</button>
+                <button class="key" onclick="playNote(1046.50, this)">C5</button>
+            </div>
+        </section>
+
+        <!-- DRUM MACHINE -->
+        <section class="section glass">
+            <div class="section-title">🥁 Drums (16 Pads)</div>
+            <div class="grid-4">
+                <button class="pad" onclick="playDrum(60, this)">Kick</button>
+                <button class="pad" onclick="playDrum(120, this)">Snare</button>
+                <button class="pad" onclick="playDrum(150, this)">Clap</button>
+                <button class="pad" onclick="playDrum(300, this)">HiHat</button>
+                <button class="pad" onclick="playDrum(200, this)">Tom H</button>
+                <button class="pad" onclick="playDrum(180, this)">Tom M</button>
+                <button class="pad" onclick="playDrum(120, this)">Tom L</button>
+                <button class="pad" onclick="playDrum(400, this)">Perc</button>
+                <button class="pad" onclick="playDrum(500, this)">Crash</button>
+                <button class="pad" onclick="playDrum(450, this)">Ride</button>
+                <button class="pad" onclick="playDrum(550, this)">Bell</button>
+                <button class="pad" onclick="playDrum(350, this)">Cowbell</button>
+                <button class="pad" onclick="playDrum(250, this)">Conga</button>
+                <button class="pad" onclick="playDrum(220, this)">Bongo</button>
+                <button class="pad" onclick="playDrum(400, this)">Agogo</button>
+                <button class="pad" onclick="playDrum(600, this)">Shaker</button>
+            </div>
+        </section>
+
+        <!-- VISUALIZER -->
+        <section class="section glass">
+            <div class="section-title">📊 Real-Time Visualizer</div>
+            <div class="waveform" id="waveform">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </section>
+
+        <!-- MIXER -->
+        <section class="section glass">
+            <div class="section-title">🎛️ Mixer (8 Ch)</div>
+            <div class="grid-8">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Master</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span id="vol1">0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Drums</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Bass</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Synth</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Vocals</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>FX</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Pad</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9px;">
+                    <span>Ambient</span>
+                    <input type="range" min="0" max="100" value="50" style="width: 30px; height: 60px; writing-mode: bt-lr;">
+                    <span>0dB</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEQUENCER -->
+        <section class="section glass">
+            <div class="section-title">🎯 16-Step Sequencer</div>
+            <div class="grid-8">
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+                <button class="seq-step" onclick="toggleStep(this)"></button>
+            </div>
+        </section>
+
+        <!-- KNOBS -->
+        <section class="section glass">
+            <div class="section-title">🎚️ Controls</div>
+            <div class="flex" style="justify-content: space-around; flex-wrap: wrap;">
+                <div class="knob">Filter</div>
+                <div class="knob">Resonance</div>
+                <div class="knob">Attack</div>
+                <div class="knob">Release</div>
+            </div>
+        </section>
+
+        <!-- STATUS -->
+        <section class="section glass" style="grid-column: 1 / -1;">
+            <div class="section-title">📊 System Status</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;">
+                <div class="status-item">
+                    <div style="color: var(--neon-primary); font-weight: 700;">CPU</div>
+                    <div style="font-size: 16px; font-weight: 800;" id="cpuLoad">15%</div>
+                </div>
+                <div class="status-item">
+                    <div style="color: var(--neon-primary); font-weight: 700;">Memory</div>
+                    <div style="font-size: 16px; font-weight: 800;">48 MB</div>
+                </div>
+                <div class="status-item">
+                    <div style="color: var(--neon-primary); font-weight: 700;">Latency</div>
+                    <div style="font-size: 16px; font-weight: 800;">&lt;10ms</div>
+                </div>
+                <div class="status-item">
+                    <div style="color: var(--neon-primary); font-weight: 700;">Voices</div>
+                    <div style="font-size: 16px; font-weight: 800;" id="voices">0</div>
+                </div>
+                <div class="status-item">
+                    <div style="color: var(--neon-primary); font-weight: 700;">Sample Rate</div>
+                    <div style="font-size: 16px; font-weight: 800;">48 kHz</div>
+                </div>
+                <div class="status-item">
+                    <div style="color: var(--neon-primary); font-weight: 700;">Bit Depth</div>
+                    <div style="font-size: 16px; font-weight: 800;">32-bit</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 10px; color: var(--neon-primary); text-align: center;">
+                🦆 DUCK STUDIO ANIMATED | All Features + Full Animations ⚡
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // REGISTER GSAP PLUGINS
+        gsap.registerPlugin(ScrollTrigger);
+
+        // AUDIO CONTEXT
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let masterGain = audioContext.createGain();
+        masterGain.connect(audioContext.destination);
+        masterGain.gain.value = 0.3;
+
+        let activeVoices = 0;
+
+        // PLAY NOTE WITH ANIMATION
+        function playNote(freq, element) {
+            if (audioContext.state === 'suspended') audioContext.resume();
+
+            const now = audioContext.currentTime;
+            const osc = audioContext.createOscillator();
+            const env = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            osc.frequency.value = freq;
+            osc.type = 'triangle';
+            filter.type = 'lowpass';
+            filter.frequency.value = 5000;
+
+            env.gain.setValueAtTime(0.2, now);
+            env.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+            osc.connect(filter);
+            filter.connect(env);
+            env.connect(masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.5);
+
+            // ANIMATION
+            element.classList.add('active');
+            gsap.to(element, { duration: 0.1, boxShadow: '0 0 30px rgba(0, 255, 157, 0.8)' });
+            setTimeout(() => element.classList.remove('active'), 100);
+
+            activeVoices++;
+            updateVoiceCount();
+            setTimeout(() => { activeVoices--; updateVoiceCount(); }, 500);
+        }
+
+        // PLAY DRUM WITH ANIMATION
+        function playDrum(freq, element) {
+            if (audioContext.state === 'suspended') audioContext.resume();
+
+            const now = audioContext.currentTime;
+            const osc = audioContext.createOscillator();
+            const env = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            filter.type = 'lowpass';
+            filter.frequency.value = 5000;
+
+            env.gain.setValueAtTime(0.3, now);
+            env.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+            osc.connect(filter);
+            filter.connect(env);
+            env.connect(masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.5);
+
+            // ANIMATION
+            element.classList.add('active');
+            gsap.to(element, { duration: 0.3, scale: 0.95, yoyo: true, repeat: 1 });
+            setTimeout(() => element.classList.remove('active'), 100);
+
+            activeVoices++;
+            updateVoiceCount();
+            setTimeout(() => { activeVoices--; updateVoiceCount(); }, 500);
+        }
+
+        // UTILITY FUNCTIONS
+        function updateVoiceCount() {
+            document.getElementById('voices').textContent = activeVoices;
+        }
+
+        function toggleRecord() {
+            document.getElementById('status').textContent = document.getElementById('status').textContent === 'READY' ? 'RECORDING' : 'READY';
+        }
+
+        function togglePlay() {
+            document.getElementById('status').textContent = document.getElementById('status').textContent === 'READY' ? 'PLAYING' : 'READY';
+        }
+
+        function resetStudio() {
+            document.querySelectorAll('.seq-step.active').forEach(el => el.classList.remove('active'));
+            activeVoices = 0;
+            document.getElementById('status').textContent = 'READY';
+            document.getElementById('voices').textContent = '0';
+            gsap.to('.knob', { duration: 0.5, rotation: 0 });
+        }
+
+        function toggleStep(element) {
+            element.classList.toggle('active');
+            gsap.to(element, { duration: 0.3, scale: element.classList.contains('active') ? 1.2 : 1 });
+        }
+
+        // CPU LOAD ANIMATION
+        setInterval(() => {
+            document.getElementById('cpuLoad').textContent = Math.floor(Math.random() * 40 + 10) + '%';
+            document.querySelectorAll('.bar').forEach(bar => {
+                bar.style.height = (Math.random() * 80 + 10) + '%';
+            });
+        }, 100);
+
+        // INTRO ANIMATION
+        gsap.fromTo('.section', {
+            opacity: 0,
+            y: 30
+        }, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'power3.out'
+        });
+
+        // HOVER ANIMATIONS
+        document.querySelectorAll('.btn, .pad, .key, .seq-step').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(el, { duration: 0.2, scale: 1.05 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(el, { duration: 0.2, scale: 1 });
+            });
+        });
+
+        console.log('🦆 DUCK STUDIO ANIMATED - ALL ANIMATIONS ACTIVE! ✨');
+    </script>
+</body>
+</html>
